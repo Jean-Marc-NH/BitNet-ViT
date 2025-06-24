@@ -3,23 +3,27 @@
 #include <vector>
 #include <string>
 #include "PatchEmbedder.hpp"
+#include "PositionalEmbedding.hpp"
+#include "BitLinear.hpp"
+
+
 
 using namespace std;
 
 
-bool load_image_from_bin(const std::string& path, int index, float* image, int image_size = 48) {
+bool load_image_from_bin(const string& path, int index, float* image, int image_size = 48) {
     const int pixels = image_size * image_size;
-    std::ifstream in(path, std::ios::binary);
+    ifstream in(path, ios::binary);
     if (!in) {
-        std::cerr << "Error al abrir: " << path << "\n";
+        cerr << "Error al abrir: " << path << "\n";
         return false;
     }
 
-    in.seekg(index * pixels * sizeof(float), std::ios::beg);
+    in.seekg(index * pixels * sizeof(float), ios::beg);
     in.read(reinterpret_cast<char*>(image), pixels * sizeof(float));
 
     if (!in) {
-        std::cerr << "Error al leer la imagen #" << index << " desde " << path << "\n";
+        cerr << "Error al leer la imagen #" << index << " desde " << path << "\n";
         return false;
     }
 
@@ -56,6 +60,26 @@ int main() {
     for (float val : tokens[0]) {
         cout << val << " ";
     }
+    cout << "\n";
+
+    PositionalEmbedding pos_embed(64, 64);
+    pos_embed.apply(tokens);
+
+    cout << "Positional Embedding: \n" << endl; 
+    cout << "Etiqueta: " << label << "\n";
+    cout << "Primer token (embedding + posicion del primer parche):\n";
+    for (float val : tokens[0]) {
+        cout << val << " ";
+    }
+    cout << "\n";
+
+    vector<float> token = tokens[0];
+
+    BitLinear linear(64, 64);  // Capa binarizada 64 → 64
+    vector<float> output = linear.forward(token);
+
+    cout << "Output BitLinear:\n";
+    for (float val : output) cout << val << " ";
     cout << "\n";
 
     return 0;

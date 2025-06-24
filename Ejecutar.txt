@@ -1,0 +1,1 @@
+g++ main.cpp PatchEmbedder.cpp PositionalEmbedding.cpp BitLinear.cpp -o bitnet_test
