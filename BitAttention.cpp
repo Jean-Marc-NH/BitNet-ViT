@@ -1,5 +1,6 @@
 #include "BitAttention.hpp"
 #include <cmath>
+#include <algorithm>
 #include <stdexcept>
 
 BitAttention::BitAttention(int dim, float threshold)
